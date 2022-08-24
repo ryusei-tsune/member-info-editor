@@ -2,3 +2,28 @@
   background-color: rgb(220, 180, 255);
   color: white;
 }
+
+.box-file {
+  position: relative;
+  margin: 8px 0;
+  padding: 2px 1em;
+  border: solid 3px #95ccff;
+  border-radius: 8px;
+}
+
+.box-file-title {
+  position: absolute;
+  display: inline-block;
+  top: -8px;
+  left: 10px;
+  padding: 0 9px;
+  line-height: 1;
+  background: #FFF;
+  color: #95ccff;
+  font-weight: bold;
+}
+
+.box-file-name {
+  margin: 0;
+  padding: 0;
+}
