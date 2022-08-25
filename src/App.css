@@ -27,3 +27,11 @@
   margin: 0;
   padding: 0;
 }
+
+.icon-space {
+  display: flex;
+  justify-content: space-between;
+}
+.icon {
+  margin-top: 2px;
+}

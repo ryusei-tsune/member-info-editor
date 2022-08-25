@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from 'react'
+import { FaEdit } from 'react-icons/fa'
+import { MdDelete } from 'react-icons/md'
+import './App.css'
 
 type Member = {
   id: number,
@@ -67,7 +69,7 @@ const App = () => {
 
   const MemberInfo = () => {
     return (
-      <>
+      <div className='mx-3'>
         <div>ファイルをインポート</div>
         <label htmlFor='import_file'>
           <div className='box-file'>
@@ -76,7 +78,11 @@ const App = () => {
                 <div className='box-file-title text-xs'>ファイル</div>
                 <div className='box-file-name text-center'>{fileName}</div>
               </>
-              : 'ファイルを選択'}
+              :
+              <>
+                ファイルを選択
+              </>
+            }
           </div>
         </label>
         <input id='import_file' type="file" hidden onChange={importData} />
@@ -84,14 +90,25 @@ const App = () => {
           {members.length === 0 ?
             <div>データがありません</div>
             :
-            <>
+            <div className='border rounded pt-2 mb-5'>
               {members.map((member: Member) =>
-                <div key={member.id}> {member.lname} {member.fname}</div>
+                <div key={member.id} className='ml-10 py-1 flex grid grid-cols-2'>
+                  <div className='col-span-1'>
+                    {member.lname} {member.fname}
+                  </div>
+                  <div className='col-span-1 icon-space'>
+                    <FaEdit className='icon'></FaEdit>
+                    <MdDelete className='icon'></MdDelete>
+                    {/* アイコン同士のスペース(space-between)を上手く調整するためにdivタグを2つ入れる */}
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
               )}
-            </>
+            </div>
           }
         </div>
-      </>
+      </div>
     )
   }
 
@@ -99,7 +116,7 @@ const App = () => {
     <div>
       <div className='app-bar text-3xl font-bold py-4'>入力ホーム</div>
       <div className=' flex justify-center'>
-        <div className='mt-3 max-w-5xl'>
+        <div className='mt-3 max-w-7xl'>
           <Header />
           <div className='grid grid-cols-1 sm:grid-cols-3'>
             <div className='sm:col-span-1'>
