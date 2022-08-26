@@ -1,13 +1,17 @@
 .app-bar {
-  background-color: rgb(220, 180, 255);
+  background-color: #44c4ff;
   color: white;
+}
+
+.import-title {
+  border-bottom: solid 1px black;
 }
 
 .box-file {
   position: relative;
   margin: 8px 0;
   padding: 2px 1em;
-  border: solid 3px #95ccff;
+  border: solid 3px #90cdf4;
   border-radius: 8px;
 }
 
@@ -19,7 +23,7 @@
   padding: 0 9px;
   line-height: 1;
   background: #FFF;
-  color: #95ccff;
+  color: #90cdf4;
   font-weight: bold;
 }
 

@@ -58,7 +58,7 @@ const App = () => {
 
   const Header = () => {
     return (
-      <div className='border border-purple-300 rounded mx-3 px-3'>
+      <div className='border border-blue-300 rounded mx-3 px-3'>
         <div className='font-bold text-xl my-2'>メンバー情報ファイル(JSON)作成ツール - 後藤研究室ホームページ用</div>
         <div className='text-lg'>
           このサイトは<a href='https://www.mis.cs.okayama-u.ac.jp/member.html' target='_blank' rel='noopener noreferrer'>後藤研究室ホームページ</a>の、メンバー紹介を表示するためのデータを作成するツールです。
@@ -70,8 +70,8 @@ const App = () => {
   const MemberInfo = () => {
     return (
       <div className='mx-3'>
-        <div>ファイルをインポート</div>
-        <label htmlFor='import_file'>
+        <div className='import-title'>ファイルをインポート</div>
+        <label htmlFor='importFile'>
           <div className='box-file'>
             {isSelect ?
               <>
@@ -85,7 +85,7 @@ const App = () => {
             }
           </div>
         </label>
-        <input id='import_file' type="file" hidden onChange={importData} />
+        <input id='importFile' type="file" hidden onChange={importData} />
         <div>
           {members.length === 0 ?
             <div>データがありません</div>
@@ -114,9 +114,9 @@ const App = () => {
 
   return (
     <div>
-      <div className='app-bar text-3xl font-bold py-4'>入力ホーム</div>
+      <div className='app-bar text-3xl font-bold py-4 pl-3'>入力ホーム</div>
       <div className=' flex justify-center'>
-        <div className='mt-3 max-w-7xl'>
+        <div className='mt-3 max-w-screen-xl'>
           <Header />
           <div className='grid grid-cols-1 sm:grid-cols-3'>
             <div className='sm:col-span-1'>
