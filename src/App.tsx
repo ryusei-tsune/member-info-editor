@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { FaEdit } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import './App.css'
@@ -25,8 +25,9 @@ type Member = {
 
 const App = () => {
   const [fileName, setFileName] = useState('')
-  const [isSelect, setIsSelect] = useState(false)
   const [members, setMembers] = useState<Member[]>([])
+  const [memberInfo, setMemberInfo] = useState<Member | null>(null)
+  const classRef = useRef<HTMLInputElement>(null)
 
   const readFile = async (file: File): Promise<string | ArrayBuffer | null> => {
     return new Promise((resolve, reject) => {
@@ -44,15 +45,23 @@ const App = () => {
   }
   const importData = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.files !== null) {
-      console.log(e.currentTarget.files)
       const name: string = e.currentTarget.files[0].name
       const text: string | ArrayBuffer | null = await readFile(e.currentTarget.files[0])
-      if (typeof text == 'string') {
+      if (typeof text === 'string') {
         const member_json: Member[] = JSON.parse(text)
-        setIsSelect(true)
         setFileName(name)
         setMembers(member_json)
       }
+    }
+  }
+
+  const SelectMember = (index: number) => {
+    setMemberInfo(members[index])
+  }
+
+  const ChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (classRef.current !== null){
+      console.log(classRef.current.value)
     }
   }
 
@@ -67,13 +76,13 @@ const App = () => {
     )
   }
 
-  const MemberInfo = () => {
+  const MemberList = () => {
     return (
-      <div className='mx-3'>
+      <div className='mx-3 pt-5'>
         <div className='import-title'>ファイルをインポート</div>
         <label htmlFor='importFile'>
           <div className='box-file'>
-            {isSelect ?
+            {fileName !== '' ?
               <>
                 <div className='box-file-title text-xs'>ファイル</div>
                 <div className='box-file-name text-center'>{fileName}</div>
@@ -91,13 +100,13 @@ const App = () => {
             <div>データがありません</div>
             :
             <div className='border rounded pt-2 mb-5'>
-              {members.map((member: Member) =>
+              {members.map((member: Member, index: number) =>
                 <div key={member.id} className='ml-10 py-1 flex grid grid-cols-2'>
                   <div className='col-span-1'>
                     {member.lname} {member.fname}
                   </div>
                   <div className='col-span-1 icon-space'>
-                    <FaEdit className='icon'></FaEdit>
+                    <FaEdit className='icon' onClick={() => { SelectMember(index) }}></FaEdit>
                     <MdDelete className='icon'></MdDelete>
                     {/* アイコン同士のスペース(space-between)を上手く調整するためにdivタグを2つ入れる */}
                     <div></div>
@@ -112,6 +121,15 @@ const App = () => {
     )
   }
 
+  const MemberInfo = () => {
+    return (
+      <div className='mx-3 pt-5'>
+        {memberInfo?.lname} {memberInfo?.fname}
+        <div className='flex '>第<input type="text" id="class" ref={classRef} className='border border-gray-300 text-gray-900 text-sm rounded-lg' onChange={ChangeText} />期</div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className='app-bar text-3xl font-bold py-4 pl-3'>入力ホーム</div>
@@ -120,9 +138,11 @@ const App = () => {
           <Header />
           <div className='grid grid-cols-1 sm:grid-cols-3'>
             <div className='sm:col-span-1'>
+              <MemberList />
+            </div>
+            <div className='sm:col-span-2'>
               <MemberInfo />
             </div>
-            <div className='sm:col-span-2'>test2</div>
           </div>
         </div>
       </div>
