@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { animateScroll as scroller } from 'react-scroll'
 import { FaEdit, FaPaperclip } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import './App.css'
@@ -9,7 +10,7 @@ const App = () => {
   const [fileName, setFileName] = useState('')
   const [members, setMembers] = useState<Member[]>([])
   const [memberInfo, setMemberInfo] = useState<Member>(
-    { 
+    {
       id: -1,
       class: 0,
       lname: '',
@@ -74,38 +75,62 @@ const App = () => {
 
   const selectMember = (index: number) => {
     setMemberInfo(members[index])
+    scroller.scrollToTop()
   }
 
   const resisterMember = () => {
     const id = memberInfo.id
     console.log(id)
+    let tempMembers: Member[] = members
+    const tempMemberInfo: Member = {
+      id: tempMembers.length,
+      class: Number(classRef.current.value),
+      lname: lastNameRef.current.value,
+      fname: firstNameRef.current.value,
+      elname: enLastNameRef.current.value,
+      efname: enFirstNameRef.current.value,
+      email: emailRef.current.value,
+      career1: career1Ref.current.value,
+      career2: career2Ref.current.value,
+      career3: career3Ref.current.value,
+      career4: career4Ref.current.value,
+      career5: career5Ref.current.value,
+      study: studyRef.current.value,
+      hobby: hobbyRef.current.value,
+      language: languageRef.current.value,
+      comment: commentRef.current.value
+    }
     if (id === -1) {
       console.log("test1")
-    } 
+      tempMembers = [...members, tempMemberInfo]
+    }
     else {
       console.log("test2")
-      let tempMembers: Member[] = members
-      const tempMemberInfo = {
-        id: memberInfo.id,
-        class: Number(classRef.current.value),
-        lname: lastNameRef.current.value,
-        fname: firstNameRef.current.value,
-        elname: enLastNameRef.current.value,
-        efname: enFirstNameRef.current.value,
-        email: emailRef.current.value,
-        career1: career1Ref.current.value,
-        career2: career2Ref.current.value,
-        career3: career3Ref.current.value,
-        career4: career4Ref.current.value,
-        career5: career5Ref.current.value,
-        study: studyRef.current.value,
-        hobby: hobbyRef.current.value,
-        language: languageRef.current.value,
-        comment: commentRef.current.value
-      }
+      tempMemberInfo.id = tempMembers[id].id
       tempMembers[id] = tempMemberInfo
-      setMembers(tempMembers)
     }
+    setMembers(tempMembers)
+
+    setMemberInfo(
+      {
+        id: -1,
+        class: 0,
+        lname: '',
+        fname: '',
+        elname: '',
+        efname: '',
+        email: '',
+        career1: '',
+        career2: '',
+        career3: '',
+        career4: '',
+        career5: '',
+        study: '',
+        hobby: '',
+        language: '',
+        comment: ''
+      }
+    )  
   }
 
   useEffect(() => {
@@ -128,7 +153,7 @@ const App = () => {
 
   const Header = () => {
     return (
-      <div className='border border-blue-300 rounded mx-3 px-3'>
+      <div className='border border-blue-300 rounded mx-3 px-3' >
         <div className='font-bold text-xl my-2'>メンバー情報ファイル(JSON)作成ツール - 後藤研究室ホームページ用</div>
         <div className='text-lg'>
           このサイトは<a href='https://www.mis.cs.okayama-u.ac.jp/member.html' target='_blank' rel='noopener noreferrer'>後藤研究室ホームページ</a>の、メンバー紹介用のデータを作成するツールです。
@@ -158,9 +183,9 @@ const App = () => {
         </label>
         <input id='importFile' type="file" hidden onChange={importData} />
         <div className='mt-4'>
-          <div className='mb-2'>メンバーリスト</div>
+          <div className='mb-2'>メンバーリスト {members.length}</div>
           {members.length === 0 ?
-            <div className='border rounded py-2 px-2'>データがありません</div>
+            <div className='border rounded p-2'>データがありません</div>
             :
             <div className='border rounded py-2'>
               {members.map((member: Member, index: number) =>
@@ -187,7 +212,7 @@ const App = () => {
   const MemberInfo = () => {
     return (
       <div className='m-3 p-3 border'>
-        <div className='flex mb-4'>
+        <div className='flex mb-4 items-center'>
           第
           <div className='w-7 mx-1'>
             <InputField type="number" ref={classRef} />
@@ -222,7 +247,7 @@ const App = () => {
           </div>
         </div>
 
-        <hr className='mb-4'/>
+        <hr className='mb-4' />
         <div>
           学歴
           <div className='my-4'>
@@ -290,7 +315,7 @@ const App = () => {
   const ResisterButton = () => {
     return (
       <div className='flex justify-center'>
-        <button onClick={resisterMember}>登録</button>
+        <button onClick={resisterMember} className='border rounded py-2 px-6 mb-4 bg-[#d8d8d8]'>登録</button>
       </div>
     )
   }
