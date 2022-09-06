@@ -1,4 +1,51 @@
 .app-bar {
-  background-color: rgb(220, 180, 255);
+  background-color: #44c4ff;
   color: white;
+}
+a {
+  color:rgb(0, 140, 255);
+  text-decoration: underline;
+}
+.box-file {
+  position: relative;
+  margin: 8px 0;
+  padding: 2px 1em;
+  border: solid 3px #90cdf4;
+  border-radius: 8px;
+  display: flex;
+}
+
+.box-file-title {
+  position: absolute;
+  display: inline-block;
+  top: -8px;
+  left: 10px;
+  padding: 0 9px;
+  line-height: 1;
+  background: #FFF;
+  color: #90cdf4;
+  font-weight: bold;
+}
+
+.box-file-name {
+  margin: 0;
+  padding: 0;
+}
+
+.icon-space {
+  display: flex;
+  justify-content: space-between;
+}
+.icon {
+  margin-top: 4px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance:textfield;
+}
+input:focus {
+  outline: none;
 }
