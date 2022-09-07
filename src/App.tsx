@@ -73,8 +73,9 @@ const App = () => {
     }
   }
 
-  const selectMember = (index: number) => {
-    setMemberInfo(members[index])
+  const selectMember = (id: number) => {
+    const member: Member = members.filter((m) => (m.id === id))[0]
+    setMemberInfo(member)
     scroller.scrollToTop()
   }
 
@@ -101,26 +102,41 @@ const App = () => {
     )
   }
 
+  const deleteMember = (id: number) => {
+    console.log(id)
+    const infoFlag = (memberInfo.id === id || memberInfo.id === -1)
+    setMembers(members.filter((member) => (member.id !== id)))
+
+    // initialMemberInfo()
+    if (infoFlag) {
+      initialMemberInfo()
+    } else {
+      console.log(memberInfo)
+      selectMember(memberInfo.id)
+      console.log(memberInfo)
+    }
+  }
+
   const resisterMember = () => {
     const id = memberInfo.id
     let tempMembers: Member[] = members
     const tempMemberInfo: Member = {
-      id: tempMembers.length,
+      id: members[tempMembers.length - 1].id + 1,
       class: Number(classRef.current.value),
       lname: lastNameRef.current.value,
       fname: firstNameRef.current.value,
       elname: enLastNameRef.current.value,
       efname: enFirstNameRef.current.value,
       email: emailRef.current.value,
-      career1: career1Ref.current.value,
-      career2: career2Ref.current.value,
-      career3: career3Ref.current.value,
-      career4: career4Ref.current.value,
-      career5: career5Ref.current.value,
-      study: studyRef.current.value,
-      hobby: hobbyRef.current.value,
-      language: languageRef.current.value,
-      comment: commentRef.current.value
+      career1: career1Ref.current.value || '-',
+      career2: career2Ref.current.value || '-',
+      career3: career3Ref.current.value || '-',
+      career4: career4Ref.current.value || '-',
+      career5: career5Ref.current.value || '-',
+      study: studyRef.current.value || '-',
+      hobby: hobbyRef.current.value || '-',
+      language: languageRef.current.value || '-',
+      comment: commentRef.current.value || '-'
     }
     if (id === -1) {
       tempMembers = [...members, tempMemberInfo]
@@ -132,6 +148,23 @@ const App = () => {
     setMembers(tempMembers)
 
     initialMemberInfo()
+  }
+
+  const clickDownload = () => {
+    if (members.length !== 0) {
+      const fileName = 'download.json'
+      const json = new Blob([JSON.stringify(members)], { type: 'text/json' })
+      const url = URL.createObjectURL(json)
+      const link = document.createElement('a')
+      document.body.appendChild(link)
+      link.href = url
+      link.setAttribute('download', fileName)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(url);
+    } else {
+      alert('登録されているメンバーがいません')
+    }
   }
 
   useEffect(() => {
@@ -150,7 +183,7 @@ const App = () => {
     hobbyRef.current.value = memberInfo.hobby || ""
     languageRef.current.value = memberInfo.language || ""
     commentRef.current.value = memberInfo.comment || ""
-  }, [memberInfo])
+  }, [memberInfo, members])
 
   const Header = () => {
     return (
@@ -184,7 +217,10 @@ const App = () => {
         </label>
         <input id='importFile' type="file" hidden onChange={importData} />
         <div className='mt-4'>
-          <div className='mb-2'>メンバーリスト {members.length}</div>
+          <div className='mb-2 mx-2 flex justify-between items-center'>
+            <div>メンバーリスト {members.length}</div>
+            <DownloadButton />
+          </div>
           {members.length === 0 ?
             <div className='border rounded p-2'>データがありません</div>
             :
@@ -195,8 +231,8 @@ const App = () => {
                     {member.lname} {member.fname}
                   </div>
                   <div className='col-span-1 icon-space'>
-                    <FaEdit className='icon' onClick={() => { selectMember(index) }}></FaEdit>
-                    <MdDelete className='icon'></MdDelete>
+                    <FaEdit className='icon' onClick={() => { selectMember(member.id) }}></FaEdit>
+                    <MdDelete className='icon' onClick={() => { deleteMember(member.id) }}></MdDelete>
                     {/* アイコン同士のスペース(space-between)を上手く調整するためにdivタグを2つ入れる */}
                     <div></div>
                     <div></div>
@@ -224,6 +260,7 @@ const App = () => {
     ]
     return (
       <div className='m-3 p-3 border'>
+        {memberInfo.lname}
         <div className='flex mb-4 justify-between'>
           <div className='flex items-center'>
             第
@@ -233,7 +270,7 @@ const App = () => {
             期
           </div>
           <div>
-            <button onClick={initialMemberInfo} className='border rounded-lg py-2 px-6 mb-4 bg-[#5fccff]'>New!</button>
+            <button onClick={initialMemberInfo} className='border rounded-lg py-2 px-6 mb-4 bg-[#a0e8fc]'>New!</button>
           </div>
         </div>
 
@@ -290,7 +327,15 @@ const App = () => {
   const ResisterButton = () => {
     return (
       <div className='flex justify-center'>
-        <button onClick={resisterMember} className='border rounded py-2 px-6 mb-4 bg-[#d8d8d8]'>登録</button>
+        <button onClick={resisterMember} className='border rounded py-2 px-6 mb-4 bg-[#a0e8fc]'>登録</button>
+      </div>
+    )
+  }
+
+  const DownloadButton = () => {
+    return (
+      <div className='text-center ml-2'>
+        <button onClick={clickDownload} className='border rounded p-1 bg-[#a0e8fc]'>ダウンロード</button>
       </div>
     )
   }
