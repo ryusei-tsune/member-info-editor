@@ -1,5 +1,8 @@
+.my-container {
+  min-width: 60%;
+}
 .app-bar {
-  background-color: #44c4ff;
+  background-color: #54C3F1;
   color: white;
 }
 a {

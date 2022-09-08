@@ -8,7 +8,7 @@ export const InputField = forwardRef((props: Input, ref: Ref<HTMLInputElement>) 
             type={type}
             ref={ref}
             placeholder={placeholder}
-            className='border border-gray-300 text-gray-900 text-sm pl-2 rounded-lg w-full'
+            className='border border-gray-300 text-gray-900 text-sm pl-2 rounded-lg w-full h-8'
         />
     )
 })

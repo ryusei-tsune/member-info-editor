@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, MutableRefObject } from 'react'
+import { animateScroll as scroller } from 'react-scroll'
 import { FaEdit, FaPaperclip } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import './App.css'
@@ -9,7 +10,7 @@ const App = () => {
   const [fileName, setFileName] = useState('')
   const [members, setMembers] = useState<Member[]>([])
   const [memberInfo, setMemberInfo] = useState<Member>(
-    { 
+    {
       id: -1,
       class: 0,
       lname: '',
@@ -72,39 +73,93 @@ const App = () => {
     }
   }
 
-  const selectMember = (index: number) => {
-    setMemberInfo(members[index])
+  const selectMember = (id: number) => {
+    const member: Member = members.filter((m) => (m.id === id))[0]
+    setMemberInfo(member)
+    scroller.scrollToTop()
+  }
+
+  const initialMemberInfo = () => {
+    setMemberInfo(
+      {
+        id: -1,
+        class: 0,
+        lname: '',
+        fname: '',
+        elname: '',
+        efname: '',
+        email: '',
+        career1: '',
+        career2: '',
+        career3: '',
+        career4: '',
+        career5: '',
+        study: '',
+        hobby: '',
+        language: '',
+        comment: ''
+      }
+    )
+  }
+
+  const deleteMember = (id: number) => {
+    const infoFlag = (memberInfo.id === id || memberInfo.id === -1)
+    setMembers(members.filter((member) => (member.id !== id)))
+
+    if (infoFlag) {
+      initialMemberInfo()
+    } else {
+      selectMember(memberInfo.id)
+    }
   }
 
   const resisterMember = () => {
     const id = memberInfo.id
-    console.log(id)
+    let tempMembers: Member[] = members
+    const tempMemberInfo: Member = {
+      id: Number(tempMembers[tempMembers.length - 1].id) + 1,
+      class: Number(classRef.current.value),
+      lname: lastNameRef.current.value,
+      fname: firstNameRef.current.value,
+      elname: enLastNameRef.current.value,
+      efname: enFirstNameRef.current.value,
+      email: emailRef.current.value,
+      career1: career1Ref.current.value || '-',
+      career2: career2Ref.current.value || '-',
+      career3: career3Ref.current.value || '-',
+      career4: career4Ref.current.value || '-',
+      career5: career5Ref.current.value || '-',
+      study: studyRef.current.value || '-',
+      hobby: hobbyRef.current.value || '-',
+      language: languageRef.current.value || '-',
+      comment: commentRef.current.value || '-'
+    }
     if (id === -1) {
-      console.log("test1")
-    } 
+      tempMembers = [...members, tempMemberInfo]
+    }
     else {
-      console.log("test2")
-      let tempMembers: Member[] = members
-      const tempMemberInfo = {
-        id: memberInfo.id,
-        class: Number(classRef.current.value),
-        lname: lastNameRef.current.value,
-        fname: firstNameRef.current.value,
-        elname: enLastNameRef.current.value,
-        efname: enFirstNameRef.current.value,
-        email: emailRef.current.value,
-        career1: career1Ref.current.value,
-        career2: career2Ref.current.value,
-        career3: career3Ref.current.value,
-        career4: career4Ref.current.value,
-        career5: career5Ref.current.value,
-        study: studyRef.current.value,
-        hobby: hobbyRef.current.value,
-        language: languageRef.current.value,
-        comment: commentRef.current.value
-      }
+      tempMemberInfo.id = tempMembers[id].id
       tempMembers[id] = tempMemberInfo
-      setMembers(tempMembers)
+    }
+    setMembers(tempMembers)
+
+    initialMemberInfo()
+  }
+
+  const clickDownload = () => {
+    if (members.length !== 0) {
+      const fileName = 'download.json'
+      const json = new Blob([JSON.stringify(members)], { type: 'text/json' })
+      const url = URL.createObjectURL(json)
+      const link = document.createElement('a')
+      document.body.appendChild(link)
+      link.href = url
+      link.setAttribute('download', fileName)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(url);
+    } else {
+      alert('登録されているメンバーがいません')
     }
   }
 
@@ -124,7 +179,7 @@ const App = () => {
     hobbyRef.current.value = memberInfo.hobby || ""
     languageRef.current.value = memberInfo.language || ""
     commentRef.current.value = memberInfo.comment || ""
-  }, [memberInfo])
+  }, [memberInfo, members])
 
   const Header = () => {
     return (
@@ -158,9 +213,12 @@ const App = () => {
         </label>
         <input id='importFile' type="file" hidden onChange={importData} />
         <div className='mt-4'>
-          <div className='mb-2'>メンバーリスト</div>
+          <div className='mb-2 mx-2 flex justify-between items-center'>
+            <div>メンバーリスト {members.length}</div>
+            <DownloadButton />
+          </div>
           {members.length === 0 ?
-            <div className='border rounded py-2 px-2'>データがありません</div>
+            <div className='border rounded p-2'>データがありません</div>
             :
             <div className='border rounded py-2'>
               {members.map((member: Member, index: number) =>
@@ -169,8 +227,8 @@ const App = () => {
                     {member.lname} {member.fname}
                   </div>
                   <div className='col-span-1 icon-space'>
-                    <FaEdit className='icon' onClick={() => { selectMember(index) }}></FaEdit>
-                    <MdDelete className='icon'></MdDelete>
+                    <FaEdit className='icon' onClick={() => { selectMember(member.id) }}></FaEdit>
+                    <MdDelete className='icon' onClick={() => { deleteMember(member.id) }}></MdDelete>
                     {/* アイコン同士のスペース(space-between)を上手く調整するためにdivタグを2つ入れる */}
                     <div></div>
                     <div></div>
@@ -185,34 +243,47 @@ const App = () => {
   }
 
   const MemberInfo = () => {
+    const nameInputField: { lastName: string, lastNameRef: MutableRefObject<HTMLInputElement>, firstName: string, firstNameRef: MutableRefObject<HTMLInputElement> }[] = [
+      { lastName: '苗字', lastNameRef: lastNameRef, firstName: '名前', firstNameRef: firstNameRef },
+      { lastName: 'Last name', lastNameRef: enLastNameRef, firstName: 'First name', firstNameRef: enFirstNameRef },
+    ]
+    const careerList: MutableRefObject<HTMLInputElement>[] = [career1Ref, career2Ref, career3Ref, career4Ref, career5Ref]
+    const etcList: { text: string, ref: MutableRefObject<HTMLInputElement> }[] = [
+      { text: '研究テーマ', ref: studyRef },
+      { text: '趣味', ref: hobbyRef },
+      { text: '使用言語', ref: languageRef },
+      { text: 'コメント', ref: commentRef },
+    ]
     return (
       <div className='m-3 p-3 border'>
-        <div className='flex mb-4'>
-          第
-          <div className='w-7 mx-1'>
-            <InputField type="number" ref={classRef} />
+        {memberInfo.lname}
+        <div className='flex mb-4 justify-between'>
+          <div className='flex items-center'>
+            第
+            <div className='w-7 mx-1'>
+              <InputField type="number" ref={classRef} />
+            </div>
+            期
           </div>
-          期
+          <div>
+            <button onClick={initialMemberInfo} className='border rounded-lg py-2 px-6 mb-4 bg-[#a0e8fc]'>New!</button>
+          </div>
         </div>
 
         <hr />
 
-        <div className='flex my-4'>
-          <div className='w-1/2 mx-1'>
-            <InputField type="text" placeholder='苗字' ref={lastNameRef} />
-          </div>
-          <div className='w-1/2 mx-1'>
-            <InputField type="text" placeholder='名前' ref={firstNameRef} />
-          </div>
-        </div>
-        <div className='flex my-4'>
-          <div className='w-1/2 mx-1'>
-            <InputField type="text" placeholder='Last name' ref={enLastNameRef} />
-          </div>
-          <div className='w-1/2 mx-1'>
-            <InputField type="text" placeholder='First name' ref={enFirstNameRef} />
-          </div>
-        </div>
+        {
+          nameInputField.map((nameList: { lastName: string, lastNameRef: MutableRefObject<HTMLInputElement>, firstName: string, firstNameRef: MutableRefObject<HTMLInputElement> }) =>
+            <div className='flex my-4' key={`name-inputField-${nameList.lastName}`}>
+              <div className='w-1/2 mx-1'>
+                <InputField type="text" placeholder={nameList.lastName} ref={nameList.lastNameRef} />
+              </div>
+              <div className='w-1/2 mx-1'>
+                <InputField type="text" placeholder={nameList.firstName} ref={nameList.firstNameRef} />
+              </div>
+            </div>
+          )
+        }
 
         <hr />
 
@@ -222,67 +293,29 @@ const App = () => {
           </div>
         </div>
 
-        <hr className='mb-4'/>
-        <div>
+        <hr />
+
+        <div className='mt-4'>
           学歴
-          <div className='my-4'>
-            <div className='w-full mx-1'>
-              <InputField type="text" ref={career1Ref} />
+          {careerList.map((careerRef: MutableRefObject<HTMLInputElement>, index: number) =>
+            <div className='my-4' key={`career-inputField-${index}`}>
+              <div className='w-full mx-1'>
+                <InputField type="text" ref={careerRef} />
+              </div>
             </div>
-          </div>
-          <div className='my-4'>
-            <div className='w-full mx-1'>
-              <InputField type="text" ref={career2Ref} />
-            </div>
-          </div>
-          <div className='my-4'>
-            <div className='w-full mx-1'>
-              <InputField type="text" ref={career3Ref} />
-            </div>
-          </div>
-          <div className='my-4'>
-            <div className='w-full mx-1'>
-              <InputField type="text" ref={career4Ref} />
-            </div>
-          </div>
-          <div className='my-4'>
-            <div className='w-full mx-1'>
-              <InputField type="text" ref={career5Ref} />
-            </div>
-          </div>
+          )}
         </div>
 
-        <hr />
-
-        <div className='my-4'>
-          <div className='w-full mx-1'>
-            <InputField type="text" placeholder='研究テーマ' ref={studyRef} />
+        {etcList.map((value: { text: string, ref: MutableRefObject<HTMLInputElement> }) =>
+          <div key={`etc-inputField-${value.text}`}>
+            <hr />
+            <div className='my-4'>
+              <div className='w-full mx-1'>
+                <InputField type="text" placeholder={value.text} ref={value.ref} />
+              </div>
+            </div>
           </div>
-        </div>
-
-        <hr />
-
-        <div className='my-4'>
-          <div className='w-full mx-1'>
-            <InputField type="text" placeholder='趣味' ref={hobbyRef} />
-          </div>
-        </div>
-
-        <hr />
-
-        <div className='my-4'>
-          <div className='w-full mx-1'>
-            <InputField type="text" placeholder='使用言語' ref={languageRef} />
-          </div>
-        </div>
-
-        <hr />
-
-        <div className='my-4'>
-          <div className='w-full mx-1'>
-            <InputField type="text" placeholder='コメント' ref={commentRef} />
-          </div>
-        </div>
+        )}
       </div>
     )
   }
@@ -290,7 +323,15 @@ const App = () => {
   const ResisterButton = () => {
     return (
       <div className='flex justify-center'>
-        <button onClick={resisterMember}>登録</button>
+        <button onClick={resisterMember} className='border rounded py-2 px-6 mb-4 bg-[#a0e8fc]'>登録</button>
+      </div>
+    )
+  }
+
+  const DownloadButton = () => {
+    return (
+      <div className='text-center ml-2'>
+        <button onClick={clickDownload} className='border rounded p-1 bg-[#a0e8fc]'>ダウンロード</button>
       </div>
     )
   }
@@ -299,7 +340,7 @@ const App = () => {
     <div>
       <div className='app-bar text-3xl font-bold py-4 pl-3'>入力ホーム</div>
       <div className=' flex justify-center'>
-        <div className='mt-3 max-w-screen-xl'>
+        <div className='mt-3 max-w-screen-xl my-container'>
           <Header />
           <div className='grid grid-cols-1 sm:grid-cols-3'>
             <div className='sm:col-span-1'>
