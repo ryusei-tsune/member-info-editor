@@ -256,7 +256,6 @@ const App = () => {
     ]
     return (
       <div className='m-3 p-3 border'>
-        {memberInfo.lname}
         <div className='flex mb-4 justify-between'>
           <div className='flex items-center'>
             第
