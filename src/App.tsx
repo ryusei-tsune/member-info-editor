@@ -103,17 +103,13 @@ const App = () => {
   }
 
   const deleteMember = (id: number) => {
-    console.log(id)
     const infoFlag = (memberInfo.id === id || memberInfo.id === -1)
     setMembers(members.filter((member) => (member.id !== id)))
 
-    // initialMemberInfo()
     if (infoFlag) {
       initialMemberInfo()
     } else {
-      console.log(memberInfo)
       selectMember(memberInfo.id)
-      console.log(memberInfo)
     }
   }
 
@@ -121,7 +117,7 @@ const App = () => {
     const id = memberInfo.id
     let tempMembers: Member[] = members
     const tempMemberInfo: Member = {
-      id: members[tempMembers.length - 1].id + 1,
+      id: Number(tempMembers[tempMembers.length - 1].id) + 1,
       class: Number(classRef.current.value),
       lname: lastNameRef.current.value,
       fname: firstNameRef.current.value,
@@ -187,7 +183,7 @@ const App = () => {
 
   const Header = () => {
     return (
-      <div className='border border-blue-300 rounded mx-3 px-3' >
+      <div className='border border-blue-300 rounded mx-3 px-3'>
         <div className='font-bold text-xl my-2'>メンバー情報ファイル(JSON)作成ツール - 後藤研究室ホームページ用</div>
         <div className='text-lg'>
           このサイトは<a href='https://www.mis.cs.okayama-u.ac.jp/member.html' target='_blank' rel='noopener noreferrer'>後藤研究室ホームページ</a>の、メンバー紹介用のデータを作成するツールです。

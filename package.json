@@ -1,5 +1,5 @@
 {
-  "name": "myapp",
+  "name": "member-info-editor-server",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
