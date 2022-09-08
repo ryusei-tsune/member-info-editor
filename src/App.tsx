@@ -337,7 +337,7 @@ const App = () => {
 
   return (
     <div>
-      <div className='app-bar text-3xl font-bold py-4 pl-3'>入力ホーム</div>
+      <div className='app-bar text-3xl font-bold py-4 pl-3'>入力フォーム</div>
       <div className=' flex justify-center'>
         <div className='mt-3 max-w-screen-xl my-container'>
           <Header />
