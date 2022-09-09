@@ -265,7 +265,7 @@ const App = () => {
             期
           </div>
           <div>
-            <button onClick={initialMemberInfo} className='border rounded-lg py-2 px-6 mb-4 bg-[#a0e8fc]'>New!</button>
+            <button onClick={initialMemberInfo} className='border rounded-lg py-2 px-6 mb-4 my-button'>New!</button>
           </div>
         </div>
 
@@ -322,7 +322,7 @@ const App = () => {
   const ResisterButton = () => {
     return (
       <div className='flex justify-center'>
-        <button onClick={resisterMember} className='border rounded py-2 px-6 mb-4 bg-[#a0e8fc]'>登録</button>
+        <button onClick={resisterMember} className='border rounded py-2 px-6 mb-4 my-button'>登録</button>
       </div>
     )
   }
@@ -330,7 +330,7 @@ const App = () => {
   const DownloadButton = () => {
     return (
       <div className='text-center ml-2'>
-        <button onClick={clickDownload} className='border rounded p-1 bg-[#a0e8fc]'>ダウンロード</button>
+        <button onClick={clickDownload} className='border rounded p-1 my-button'>ダウンロード</button>
       </div>
     )
   }

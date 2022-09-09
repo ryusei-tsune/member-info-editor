@@ -18,6 +18,11 @@ a {
   display: flex;
 }
 
+.box-file:hover {
+  cursor: pointer;
+  transform: scale(1.05, 1.05);
+}
+
 .box-file-title {
   position: absolute;
   display: inline-block;
@@ -43,6 +48,10 @@ a {
   margin-top: 4px;
 }
 
+.icon:hover{
+  cursor: pointer;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -51,4 +60,11 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 input:focus {
   outline: none;
+}
+
+.my-button {
+  background-color: #a0e8fc;
+}
+.my-button:hover{
+  background-color: #3ce8ff;
 }
